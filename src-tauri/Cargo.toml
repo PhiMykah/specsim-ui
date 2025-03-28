@@ -1,8 +1,8 @@
 [package]
-name = "tauri-nextjs-template"
+name = "specsim-ui"
 version = "0.1.0"
 description = "A Tauri App"
-authors = ["you"]
+authors = ["Mykah Smith"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -22,6 +22,7 @@ serde_json = "1"
 serde = { version = "1", features = ["derive"] }
 tauri = { version = "2", features = ["devtools"] }
 tauri-plugin-opener = "2"
+tauri-plugin-dialog = "2"
 
 [features]
 # by default Tauri runs in production mode
