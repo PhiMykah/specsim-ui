@@ -92,7 +92,7 @@ export function FilePicker({
     }
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
-    if (onFileChange) onFileChange(data.filePath);
+        if (onFileChange) onFileChange(data.filePath);
     }
 
     return (
@@ -112,19 +112,19 @@ export function FilePicker({
                 <FormItem className="w-full">
                     <FormControl>
                         <Input
-                        placeholder="Enter a file..."
-                        {...field}
-                        value={shortenPath(field.value)}
-                        title={field.value}
+                            placeholder="Enter a file..."
+                            {...field}
+                            value={shortenPath(field.value)}
+                            title={field.value}
                         />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
             )}
-        />
-        <Button className="text-primary-content" type="button" onClick={() => void handleDialog()}>
-            Browse
-        </Button>
+            />
+            <Button className="text-primary-content" type="button" onClick={() => void handleDialog()}>
+                Browse
+            </Button>
         </form>
     </Form>
     );

@@ -1,28 +1,34 @@
 import { Section, SectionHeader } from "@/components/Section";
-import { FilePicker } from "@/components/FilePicker";
-import { useEffect, useState } from "react";
+import { FilePicker } from "@/components/file/FilePicker";
+import { FloatInput, IntegerInput, MultiFloatInput, RangeFloatInput } from "@/components/args/NumberInput";
+import React, { useEffect, useState } from "react";
+import ParamSelection from "./args/ParamSelection";
+import BooleanInput from "./args/BooleanInput";
 
-function ParamWrapper({ children, headerText }: { children: React.ReactNode; headerText: string }) {
+function ParamWrapper({ children, headerText }: { children: React.ReactNode; headerText: string; }) {
     return (
         <Section>
             <SectionHeader text={headerText} />
-            <div className="grid gap-4 w-full">
+            <div
+                className={`grid gap-4 w-full`}
+            >
                 {children}
             </div>
         </Section>
     );
 }
 
-function Parameter({ text, command } : { text: string, command : string}) {
+function Parameter({ text, command, className }: { text: string; command: string; className?: string }) {
     return (
-        <div className="flex gap-2 items-center">
+        <div className={className ?? "flex gap-2 items-center"}>
             {text}
             <code className="bg-accent text-accent-content rounded-lg p-1 text-sm">
                 {command}
             </code>
         </div>
-    )
+    );
 }
+
 export function FileParams() {
     const [fileParams, setFileParams] = useState({
         tab: "",
@@ -82,48 +88,327 @@ export function FileParams() {
 }
 
 export function SimParams() {
+    const [simParams, setSimParams] = useState({
+        apod: "",
+        scale: "",
+        xOff: "",
+    });
+
+    const handleSimChange = (key: keyof typeof simParams, value: string) => {
+        setSimParams((prev) => ({ ...prev, [key]: value }));
+    };
+    
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            console.log("Sim parameters have changed:", simParams);
+        }, 500); // delay 500ms
+      
+        return () => { clearTimeout(timeout); } // cleanup
+    }, [simParams]);
+
     return (
         <ParamWrapper headerText="Simulation Options">
-            <Parameter command="-apod" text="Optional NMRPipe-format Apodization Profile." />
-            <Parameter command="-scale" text="Amplitude Scaling Factor." />
-            <Parameter command="-xOff" text="Optional Frequency offset value in pts." />
+            <ParamSelection 
+                label={ 
+                    <Parameter 
+                        command="-apod" 
+                        text="Optional NMRPipe-format Apodization Profile.  " 
+                        className="p-1 text-center"
+                    /> 
+                }
+                options={["Option 1", "Option 2", "Option 3"]}    
+                onValueChange={(value) => {handleSimChange("apod", value.toString())}}
+            />
+            <FloatInput 
+                label={
+                    <Parameter 
+                        command="-scale" 
+                        text="Amplitude Scaling Factor.  " 
+                        className="p-1 text-center whitespace-nowrap" 
+                    />
+                }
+                onFloatChange={(value) => {handleSimChange("scale", value.toString())}}
+            /> 
+            <FloatInput 
+                label={
+                    <Parameter 
+                        command="-xOff" 
+                        text="Optional Frequency offset value in pts.  "
+                        className="p-1 text-center whitespace-nowrap" 
+                    />
+                }
+                onFloatChange={(value) => {handleSimChange("xOff", value.toString())}}
+            />
+            
         </ParamWrapper>
     );
 }
 
 export function OptimizationOptions() {
+    const [optParams, setOptParams] = useState({
+        rx1: "",
+        rxn: "",
+        mode: "",
+        trials: "",
+        maxFail: "",
+        iseed: "",
+        verb: "",
+        noverb: "",
+        report: "",
+        freq: "",
+        step: "",
+    });
+
+    const handleOptChange = (key: keyof typeof optParams, value: string | string[]) => {
+        setOptParams((prev) => ({ ...prev, [key]: value }));
+    };
+    
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            console.log("Sim parameters have changed:", optParams);
+        }, 500); // delay 500ms
+      
+        return () => { clearTimeout(timeout); } // cleanup
+    }, [optParams]);
+
     return (
         <ParamWrapper headerText="Optimization Options">
-            <Parameter command="-rx1" text="First Point Location for Calculating Residual." />
-            <Parameter command="-rxn" text="Last Point Location for Calculating Residual." />
-            <Parameter command="-mode" text="Optimization mode (lsq, basin, minimize, brute)." />
-            <Parameter command="-trials" text="Number of Optimization Trials." />
-            <Parameter command="-maxFail" text="Max Optimization Fails Before Quitting." />
-            <Parameter command="-iseed" text="Random Number Seed." />
-            <Parameter command="-verb" text="Verbose Mode ON (Default OFF)." />
-            <Parameter command="-noverb" text="Verbose Mode OFF." />
-            <Parameter command="-report" text="Report Mode ON." />
-            <Parameter command="-freq" text="Frequency Positions (list of floats)." />
-            <Parameter command="-step" text="Step-size for optimizations that require step-size (e.g. basin)." />
+            <FloatInput 
+                label={
+                    <Parameter 
+                        command="-rx1" 
+                        text="First Point Location for Calculating Residual." 
+                    />
+                }
+                onFloatChange={(value) => {handleOptChange('rx1', value.toString())}}
+            />
+            <FloatInput 
+                label={
+                    <Parameter 
+                        command="-rxn" 
+                        text="Last Point Location for Calculating Residual."
+                    />
+                }
+                onFloatChange={(value) => {handleOptChange('rxn', value.toString())}}
+            />
+            <ParamSelection 
+                label={ 
+                    <Parameter 
+                        command="-mode" 
+                        text="Optimization mode (lsq, basin, minimize, brute)." 
+                    />
+                }
+                options={["lsq", "basin", "minimize", "brute"]}    
+                onValueChange={(value) => {handleOptChange("mode", value.toString())}}
+            />
+            
+            <IntegerInput 
+                label={
+                    <Parameter 
+                        command="-trials" 
+                        text="Number of Optimization Trials." 
+                    />
+                }
+                onIntegerChange={(value) => {handleOptChange("trials", value.toString())}}
+                positiveOnly={true}
+            />
+            
+            <IntegerInput 
+                label={
+                    <Parameter 
+                        command="-maxFail" 
+                        text="Max Optimization Fails Before Quitting." 
+                    />
+                }
+                onIntegerChange={(value) => {handleOptChange("maxFail", value.toString())}}
+                positiveOnly={true}
+            />
+            
+            <IntegerInput
+                label={
+                    <Parameter 
+                        command="-iseed" 
+                        text="Random Number Seed."
+                    />
+                }
+                onIntegerChange={(value) => {handleOptChange("iseed", value.toString())}}
+            />
+            
+            <BooleanInput 
+                label={
+                    <Parameter 
+                        command="-verb" 
+                        text="Verbose Mode (OFF/ON)." 
+                    />
+                }
+                onBoolChange={(value) => {handleOptChange("noverb", (!value).toString()); handleOptChange("verb", value.toString())}}
+            />
+
+
+            <BooleanInput 
+                label={
+                    <Parameter 
+                        command="-report"
+                        text="Report Mode (OFF/ON)." 
+                    />
+                }
+                onBoolChange={(value) => {handleOptChange("report", value.toString())}}
+            />
+            
+            <MultiFloatInput 
+                label={
+                    <Parameter 
+                        command="-freq" 
+                        text="Frequency Positions (list of floats)." 
+                    />
+                }
+                onFloatsChange={(value) => {handleOptChange("freq", value.toString())}}
+            />
+            
+
+            <FloatInput 
+                label = {
+                    <Parameter 
+                        command="-step"
+                        text="Step-size for optimizations that require step-size (e.g. basin)."
+                    />
+                }
+                onFloatChange={(value) => {handleOptChange("step", value.toString())}}
+            />
+            
         </ParamWrapper>
     );
 }
 
 export function OptimizationParams() {
+    const [optParams, setOptParams] = useState({
+        initXDecay: "",
+        initYDecay: "",
+        xP0: "",
+        xP1: "",
+        yP0: "",
+        yP1: "",
+        xDecayBounds: "",
+        yDecayBounds: "",
+        ampBounds: "",
+        p0Bounds: "",
+        p1Bounds: "",
+    })
+
+    const handleOptChange = (key: keyof typeof optParams, value: string) => {
+        setOptParams((prev) => ({ ...prev, [key]: value }));
+    };
+    
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            console.log("Sim parameters have changed:", optParams);
+        }, 500); // delay 500ms
+      
+        return () => { clearTimeout(timeout); } // cleanup
+    }, [optParams]);
+
     return (
         <ParamWrapper headerText="Optimization Parameters">
-            <Parameter command="-initXDecay" text="Initial x-axis decay value in Hz." />
-            <Parameter command="-initYDecay" text="Initial y-axis decay value in Hz." />
-            <Parameter command="-xP0" text="Zero Order Phase of All Signals for x-axis." />
-            <Parameter command="-xP1" text="First Order Phase of All Signals for x-axis." />
-            <Parameter command="-yP0" text="Zero Order Phase of All Signals for y-axis." />
-            <Parameter command="-yP1" text="First Order Phase of All Signals for y-axis." />
+            <FloatInput 
+                label={
+                    <Parameter 
+                        command="-initXDecay" 
+                        text="Initial x-axis decay value in Hz." 
+                    />
+                }
+                onFloatChange={(value) => {handleOptChange("initXDecay", value.toString())}}
+            />
+            <FloatInput 
+                label={
+                    <Parameter 
+                        command="-initYDecay" 
+                        text="Initial y-axis decay value in Hz." 
+                    />
+                }
+                onFloatChange={(value) => {handleOptChange("initYDecay", value.toString())}}
+            />
+            <FloatInput 
+                label={
+                    <Parameter 
+                        command="-xP0" 
+                        text="Zero Order Phase of All Signals for x-axis." 
+                    />
+                }
+                onFloatChange={(value) => {handleOptChange("xP0", value.toString())}}
+            />
+            <FloatInput 
+                label={
+                    <Parameter 
+                        command="-xP1" 
+                        text="First Order Phase of All Signals for x-axis." 
+                    />
+                }
+                onFloatChange={(value) => {handleOptChange("xP1", value.toString())}}
+            />
+            <FloatInput 
+                label={
+                    <Parameter 
+                        command="-yP0" 
+                        text="Zero Order Phase of All Signals for y-axis." 
+                    />
+                }
+                onFloatChange={(value) => {handleOptChange("yP0", value.toString())}}
+            />
+            <FloatInput 
+                label={
+                    <Parameter 
+                        command="-yP1" 
+                        text="First Order Phase of All Signals for y-axis." 
+                    />
+                }
+                onFloatChange={(value) => {handleOptChange("yP1", value.toString())}}
+            />
             <SectionHeader text="Bounds Options" />
-            <Parameter command="-xDecayBounds" text="Lower and upper bounds for x-decay in Hz." />
-            <Parameter command="-yDecayBounds" text="Lower and upper bounds for y-decay in Hz." />
-            <Parameter command="-ampBounds" text="Lower and upper bounds for amplitude." />
-            <Parameter command="-p0Bounds" text="Lower and upper bounds for p0 phase correction." />
-            <Parameter command="-p1Bounds" text="Lower and upper bounds for p1 phase correction." />
+            <RangeFloatInput
+                label={
+                    <Parameter 
+                        command="-xDecayBounds" 
+                        text="Lower and upper bounds for x-decay in Hz." 
+                    />
+                }
+                onRangeChange={({lower, upper}) => {handleOptChange("xDecayBounds", `${lower.toString()}, ${upper.toString()}`)}}
+            />
+            <RangeFloatInput 
+                label={
+                    <Parameter 
+                        command="-yDecayBounds" 
+                        text="Lower and upper bounds for y-decay in Hz." 
+                    />
+                }
+                onRangeChange={({lower, upper}) => {handleOptChange("yDecayBounds", `${lower.toString()}, ${upper.toString()}`)}}
+            />
+            <RangeFloatInput 
+                label={
+                    <Parameter 
+                        command="-ampBounds" 
+                        text="Lower and upper bounds for amplitude." 
+                    />
+                }
+                onRangeChange={({lower, upper}) => {handleOptChange("ampBounds", `${lower.toString()}, ${upper.toString()}`)}}
+            />
+            <RangeFloatInput 
+                label={
+                    <Parameter 
+                        command="-p0Bounds" 
+                        text="Lower and upper bounds for p0 phase correction." 
+                    />
+                }
+                onRangeChange={({lower, upper}) => {handleOptChange("p0Bounds", `${lower.toString()}, ${upper.toString()}`)}}
+            />
+            <RangeFloatInput 
+                label={
+                    <Parameter 
+                        command="-p1Bounds" 
+                        text="Lower and upper bounds for p1 phase correction." 
+                    />
+                }
+                onRangeChange={({lower, upper}) => {handleOptChange("p1Bounds", `${lower.toString()}, ${upper.toString()}`)}}
+            />
         </ParamWrapper>
     );
 }
