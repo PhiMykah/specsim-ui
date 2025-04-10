@@ -12,7 +12,7 @@ export function BooleanInput({ label, value, onBoolChange }: BooleanInputProps) 
     };
 
     return (
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-between">
             <label>{label}</label>
             <input
                 type="checkbox"

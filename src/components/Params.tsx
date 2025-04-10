@@ -414,30 +414,175 @@ export function OptimizationParams() {
 }
 
 export function ModelParams() {
+    const [modelParams, setModelParams] = useState({
+        eDecay: "",
+        eAmp: "",
+        gDecay: "",
+        gAmp: "",
+        j1: "",
+        j2: "",
+        j3: "",
+        ePhase: "",
+        gPhase: "",
+    })
+
+    const handleModelChange = (key: keyof typeof modelParams, value: string) => {
+        setModelParams((prev) => ({ ...prev, [key]: value }));
+    };
+    
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            console.log("Sim parameters have changed:", modelParams);
+        }, 500); // delay 500ms
+      
+        return () => { clearTimeout(timeout); } // cleanup
+    }, [modelParams]);
+
     return (
         <ParamWrapper headerText="Model Parameters">
-            <Parameter command="-eDecay" text="Exponential Decays (list of floats)." />
-            <Parameter command="-eAmp" text="Exponential Amplitudes, or Keyword Auto." />
-            <Parameter command="-gDecay" text="Gaussian Decays (Pts Hz ppm %%)." />
-            <Parameter command="-gAmp" text="Gaussian Amplitudes, or Keyword Auto." />
-            <Parameter command="-j1" text="Coupling 1 (Cosine Modulation, Pts Hz ppm %%)." />
-            <Parameter command="-j2" text="Coupling 2 (Cosine Modulation, Pts Hz ppm %%)." />
-            <Parameter command="-j3" text="Coupling 3 (Cosine Modulation, Pts Hz ppm %%)." />
-            <Parameter command="-ePhase" text="Additional Phase for Each Exponential Signal." />
-            <Parameter command="-gPhase" text="Additional Phase for Each Gaussian Signal." />
+            <MultiFloatInput 
+                label={
+                    <Parameter 
+                        command="-eDecay" 
+                        text="Exponential Decays (list of floats)."
+                    />
+                }
+                onFloatsChange={(value) => {handleModelChange("eDecay", value.toString())}}
+            />
+            <MultiFloatInput
+                label={
+                    <Parameter 
+                        command="-eAmp"
+                        text="Exponential Amplitudes" 
+                    />
+                }
+                onFloatsChange={(value) => {handleModelChange("eAmp", value.toString())}}
+            />
+            <MultiFloatInput 
+                label={
+                    <Parameter 
+                        command="-gDecay" 
+                        text="Gaussian Decays (Pts Hz ppm %%)."
+                    />
+                }
+                onFloatsChange={(value) => {handleModelChange("gDecay", value.toString())}}
+            />
+            <MultiFloatInput 
+                label={
+                    <Parameter 
+                        command="-gAmp" 
+                        text="Gaussian Amplitudes, or Keyword Auto."
+                    />
+                }
+                onFloatsChange={(value) => {handleModelChange("gAmp", value.toString())}}
+            />
+            
+            <MultiFloatInput 
+                label={
+                    <Parameter
+                        command="-j1"
+                        text="Coupling 1 (Cosine Modulation, Pts Hz ppm %%)."
+                    />
+                }
+                onFloatsChange={(value) => {handleModelChange("j1", value.toString())}}
+            />
+            
+            <MultiFloatInput 
+                label={
+                    <Parameter
+                        command="-j2"
+                        text="Coupling 2 (Cosine Modulation, Pts Hz ppm %%)."
+                    />
+                }
+                onFloatsChange={(value) => {handleModelChange("j2", value.toString())}}
+            />
+            
+            <MultiFloatInput
+                label={
+                    <Parameter 
+                        command="-j3" 
+                        text="Coupling 3 (Cosine Modulation, Pts Hz ppm %%)."
+                    />
+                }
+                onFloatsChange={(value) => {handleModelChange("j3", value.toString())}}
+            />
+            
+            <MultiFloatInput 
+                label={
+                    <Parameter 
+                        command="-ePhase"
+                        text="Additional Phase for Each Exponential Signal."
+                    />
+                }
+                onFloatsChange={(value) => {handleModelChange("ePhase", value.toString())}}
+            />
+            
+            <MultiFloatInput 
+                label={
+                    <Parameter 
+                        command="-gPhase"
+                        text="Additional Phase for Each Gaussian Signal."
+                    />
+                }
+                onFloatsChange={(value) => {handleModelChange("gPhase", value.toString())}}
+            />
+            
         </ParamWrapper>
     );
 }
 
 export function OtherOptions() {
+    const [otherParams, setOtherParams] = useState({
+        ts: "",
+        nots: "",
+        notdd: "",
+        tdd: "",
+        nottdj: "",
+        tdj: "",
+    })
+
+    const handleOtherChange = (key: keyof typeof otherParams, value: string) => {
+        setOtherParams((prev) => ({ ...prev, [key]: value }));
+    };
+    
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            console.log("Sim parameters have changed:", otherParams);
+        }, 500); // delay 500ms
+      
+        return () => { clearTimeout(timeout); } // cleanup
+    }, [otherParams]);
+
     return (
         <ParamWrapper headerText="Additional Parameters" >
-            <Parameter command="-ts" text="Scale Time-Domain Signal by Decay Integral." />
-            <Parameter command="-nots" text="No Time-Domain Scale (Default OFF)." />
-            <Parameter command="-notdd" text="Interpret Linewidth in Frequency Domain (Default OFF)." />
-            <Parameter command="-tdd" text="Interpret Linewidth as Time Domain Decay (Default OFF)." />
-            <Parameter command="-tdj" text="Interpret J-Modulation in Time Domain (Default OFF)." />
-            <Parameter command="-notdj" text="Interpret J-Modulation in Frequency Domain (Default OFF)." />
+            <BooleanInput 
+                label={
+                    <Parameter 
+                        command="-ts/nots" 
+                        text="Scale Time-Domain Signal by Decay Integral (OFF/ON)."
+                    />
+                }
+                onBoolChange={(value) => {handleOtherChange("nots", (!value).toString()); handleOtherChange("ts", value.toString())}}
+            />
+            <BooleanInput 
+                label={
+                    <Parameter 
+                        command="-tdd/notdd" 
+                        text="Interpret Linewidth as Frequency Domain or Time Domain Decay (Frequency/Time)."
+                        className="flex flex-wrap text-wrap gap-2 items-center"
+                    />
+                }
+                onBoolChange={(value) => {handleOtherChange("notdd", (!value).toString()); handleOtherChange("tdd", value.toString())}}
+            />
+            <BooleanInput 
+                label={
+                    <Parameter 
+                        command="-tdj/nottdj" 
+                        text="Interpret J-Modulation in Time Domain (OFF/ON)."
+                    />
+                }
+                onBoolChange={(value) => {handleOtherChange("nottdj", (!value).toString()); handleOtherChange('tdj', value.toString())}}
+            />
         </ParamWrapper>
     );
 }
