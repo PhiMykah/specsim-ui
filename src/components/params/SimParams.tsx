@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { ParamWrapper, Parameter } from "@/components/params/Param";
-import ParamSelection from "@/components/args/ParamSelection";
 import { FloatInput } from "@/components/args/NumberInput";
 
 export default function SimParams({ onParamsChange }: { onParamsChange: (params: Record<string, unknown>) => void }) {
     const [simParams, setSimParams] = useState({
-        apod: "",
         scale: "",
         xOff: "",
     });
@@ -28,17 +26,6 @@ export default function SimParams({ onParamsChange }: { onParamsChange: (params:
 
     return (
         <ParamWrapper headerText="Simulation Options">
-            <ParamSelection 
-                label={ 
-                    <Parameter 
-                        command="-apod" 
-                        text="Optional NMRPipe-format Apodization Profile.  " 
-                        className="p-1 text-center"
-                    /> 
-                }
-                options={["Option 1", "Option 2", "Option 3"]}    
-                onValueChange={(value) => {handleSimChange("apod", value.toString())}}
-            />
             <FloatInput 
                 label={
                     <Parameter 

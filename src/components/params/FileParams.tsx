@@ -9,6 +9,8 @@ export default function FileParams({ onParamsChange }: { onParamsChange: (params
         ft1: "",
         ft2: "",
         out: "",
+        apod: "",
+        basis: "",
     });
 
     const handleFileChange = (key: keyof typeof fileParams, path: string) => {
@@ -59,6 +61,26 @@ export default function FileParams({ onParamsChange }: { onParamsChange: (params
                 mode="save"
                 onFileChange={(path) => { handleFileChange("out", path) }}
                 
+            />
+            <FilePicker
+                label={ 
+                    <Parameter 
+                        command="-apod" 
+                        text="Optional NMRPipe-format Apodization Profile." 
+                    /> 
+                }
+                mode='load'
+                onFileChange={(path) => {handleFileChange("apod", path)}}
+            />
+            <FilePicker
+                label={
+                    <Parameter 
+                        command="-basis"
+                        text="Save Each Peak in a Basis Set, Designate the Folder Path"
+                    />
+                }
+                mode='save-directory'
+                onFileChange={(path) => {handleFileChange("basis", path)}}
             />
         </ParamWrapper>
     );

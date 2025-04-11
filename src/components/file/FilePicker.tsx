@@ -36,7 +36,7 @@ const FormSchema = z.object({
 interface FilePickerProps {
     label: string | React.ReactNode
     extensions?: string[];
-    mode: "load" | "save";
+    mode: "load" | "save" | "save-directory";
     onFileChange?: (filePath: string) => void;
 }
 
@@ -60,26 +60,33 @@ export function FilePicker({
         let selectedFile: string | null = null;
 
         if (mode === "load") {
-        const result = await open({
-            multiple: false,
-            filters: [
-            {
-                name: "NMRPipe Tab File",
-                extensions: extensions ?? ["*"],
-            },
-            ],
-        });
-        selectedFile = typeof result === "string" ? result : null;
-        } else {
-        const result = await save({
-            filters: [
-            {
-                name: "Simulation Optimization Output",
-                extensions: extensions ?? ["*"],
-            },
-            ],
-        });
-        selectedFile = result;
+            const result = await open({
+                multiple: false,
+                filters: [
+                {
+                    name: "NMRPipe Tab File",
+                    extensions: extensions ?? ["*"],
+                },
+                ],
+            });
+            selectedFile = typeof result === "string" ? result : null;
+        } else if ( mode === "save" ) {
+            const result = await save({
+                filters: [
+                {
+                    name: "Simulation Optimization Output",
+                    extensions: extensions ?? ["*"],
+                },
+                ],
+            });
+            selectedFile = result;
+        }
+        else {
+            const result = await open({
+                directory: true,
+                multiple: false,
+            })
+            selectedFile = typeof result === "string" ? result : null;
         }
 
         if (selectedFile) {
