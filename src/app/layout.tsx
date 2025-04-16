@@ -1,6 +1,8 @@
 "use client";
 
 import { ThemeProvider } from "@/components/theme-provider"
+import { SidebarProvider } from "@/components/ui/sidebar"
+import { AppSidebar, Trigger } from "@/components/sidebar/AppSidebar"
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "@/styles/globals.css";
 
@@ -24,20 +26,27 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} text-base-content antialiased`}
-      >
+    <html>
+      <body>
         <ThemeProvider
           attribute="data-theme"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+        <SidebarProvider className="relative bg-base-200">
+            <AppSidebar />
+            <Trigger />
+            <main
+              className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} text-base-content antialiased w-full`}
+            >
+              {children}
+            </main>
+        </SidebarProvider>
         </ThemeProvider>
       </body>
-    </html>
+    </html> 
   );
 }

@@ -16,10 +16,10 @@ export function ParamWrapper({ children, headerText }: { children: React.ReactNo
 export function Parameter({ text, command, className }: { text: string; command: string; className?: string }) {
     return (
         <div className={className ?? "flex gap-2 items-center"}>
-            {text}
             <code className="bg-accent text-accent-content rounded-lg p-1 text-sm">
-                {command}
+                {command}  
             </code>
+            {text}
         </div>
     );
 }

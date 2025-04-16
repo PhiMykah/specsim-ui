@@ -1,3 +1,5 @@
+"use client";
+
 import { FilePicker } from "@/components/file/FilePicker";
 import React, { useEffect, useState } from "react";
 import { ParamWrapper, Parameter } from "@/components/params/Param";
