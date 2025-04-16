@@ -3,6 +3,7 @@
 import { ThemeProvider } from "@/components/theme-provider"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar, Trigger } from "@/components/sidebar/AppSidebar"
+import { GlobalParamsProvider } from "@/components/context/GlobalParamsContext";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "@/styles/globals.css";
 
@@ -37,6 +38,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
         <SidebarProvider className="relative bg-base-200">
+          <GlobalParamsProvider>
             <AppSidebar />
             <Trigger />
             <main
@@ -44,6 +46,7 @@ export default function RootLayout({
             >
               {children}
             </main>
+          </GlobalParamsProvider>
         </SidebarProvider>
         </ThemeProvider>
       </body>

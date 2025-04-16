@@ -27,6 +27,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import Link from 'next/link';
+import { usePathname } from "next/navigation";
 import { ModeToggle } from "@/components/ModeToggle";
 
 // Menu items.
@@ -51,19 +52,19 @@ const items = [
   },
   {
     title: "Optimization Parameters",
-    href: "/Simulation/OptParam",
+    href: "/Simulation/OptParams",
     icon: ChartColumn,
     hover: ChartColumnIncreasing,
   },
   {
     title: "Model Parameters",
-    href: "/Simulation/ModelParam",
+    href: "/Simulation/ModelParams",
     icon: Package,
     hover: PackageOpen,
   },
   {
     title: "Additional Parameters",
-    href: "/Simulation/OtherParam",
+    href: "/Simulation/OtherParams",
     icon: CirclePlus,
     hover: SquarePlus,
   },
@@ -82,19 +83,24 @@ export function Trigger() {
   )
 }
 export function AppSidebar() {
+  const pathname = usePathname(); // Get the current route
+
   return (
     <Sidebar>
       <SidebarContent className="bg-base-200">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-base-content">Application</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-base-content">specsim-ui</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="text-base-content hover:text-base-content">
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className="hover:bg-accent">
+                  <SidebarMenuButton asChild 
+                    className={
+                      pathname === item.href ? "bg-accent text-accent-content" : "hover:bg-accent hover:text-accent-content"
+                    }
+                  >
                     <Link href={item.href}>
-                      <item.icon className="opacity-100 hover:opacity-0"/>
-                      {/* <item.hover className="opacity-0 hover:opacity-100" /> */}
+                      <item.icon/>
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>

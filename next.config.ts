@@ -9,4 +9,16 @@ const nextConfig: NextConfig = {
   distDir: "dist",
 };
 
+module.exports = {
+  redirects() {
+    return [
+      {
+        source: "/Simulation",
+        destination: "/Simulation/File",
+        permanent: false,
+      },
+    ];
+  },
+};
+
 export default nextConfig;

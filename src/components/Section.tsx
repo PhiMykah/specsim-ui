@@ -13,7 +13,7 @@ export function SettingsPage({ children }: { children: React.ReactNode }) {
             <header className="text-4xl font-bold row-start-1 text-center">
                 Spectral Simulation
             </header>
-            <div className="flex flex-col gap-8 row-start-2 sm:items-start w-full">
+            <div className="flex flex-col gap-4 row-start-2 sm:items-start w-full">
                 <div className="divider"></div>
                 {children}
             </div>

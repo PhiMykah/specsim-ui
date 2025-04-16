@@ -2,13 +2,14 @@
 import { Button } from "@/components/ui/button";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { invoke } from "@tauri-apps/api/core";
-import { redirect } from "next/navigation";
-import { useCallback, useState } from "react";
-
+import { useGlobalParams } from "@/components/context/GlobalParamsContext";
+import { useRouter } from "next/navigation";
+import { sections } from "@/components/context/sections";
+import { ChevronLeft } from "lucide-react";
 
 export default function Home() {
-  // const [greeted, setGreeted] = useState<string | null>(null);
-  const [combinedParams, setCombinedParams] = useState<Record<string, unknown>>({});
+  const { combinedParams } = useGlobalParams();
+  const router = useRouter();
 
   const handleSubmit = () => {
     console.log("Combined Parameters:", combinedParams);
@@ -24,39 +25,31 @@ export default function Home() {
     }, {});
 
     console.log("Flattened Parameters:", flattenedParams);
-    // invoke("submit_params", { params: combinedParams })
-    //   .then((response) => {
-    //     console.log("Response from Rust:", response);
-    //   })
-    //   .catch((err: unknown) => {
-    //     console.error("Error submitting parameters:", err);
-    //   });
   };
 
-  const updateParams = useCallback((key: string, value: Record<string, unknown>) => {
-    setCombinedParams((prev) => ({ ...prev, [key]: value }));
-  }, []);
-
-  // const greet = useCallback((): void => {
-  //   invoke<string>("greet")
-  //     .then((s) => {
-  //       setGreeted(s);
-  //     })
-  //     .catch((err: unknown) => {
-  //       console.error(err);
-  //     });
-  // }, []); 
+  const handleGoBack = () => {
+    const sectionKeys = Object.keys(sections); // Get an array of section keys
+    const lastIndex = sectionKeys.length - 1; // Find the last section index
+    const previousSection = sectionKeys[lastIndex] as keyof typeof sections; // Get the key of the previous section
+    router.push(`/Simulation/${previousSection}`); // Navigate to the previous section
+  };
 
   return (
-    redirect("/Simulation/File")
+    <div className="flex flex-col gap-3 p-10">
+      <header className="text-4xl font-bold row-start-1 text-center">
+        Submit Parameters
+      </header>
+      <pre className="bg-base-300 p-4 rounded">{JSON.stringify(combinedParams, null, 2)}</pre>
+      <div className="sticky bottom-0 bg-base-100 z-10 p-4 shadow-md">
+        <div className="flex items-center"> 
+          <Button onClick={handleSubmit} className="mr-2">
+            Submit
+          </Button>
+          <Button onClick={handleGoBack} size='icon' className="">
+            <ChevronLeft />
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }
-
-{/* <div>
-      <Section>
-        <Button onClick={handleSubmit} title="Submit Parameters" className="w-full">
-          Submit Parameters
-        </Button>
-      </Section>
-    </div>
-*/}

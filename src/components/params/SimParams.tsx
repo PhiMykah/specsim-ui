@@ -30,8 +30,7 @@ export default function SimParams({ onParamsChange }: { onParamsChange: (params:
                 label={
                     <Parameter 
                         command="-scale" 
-                        text="Amplitude Scaling Factor.  " 
-                        className="p-1 text-center whitespace-nowrap" 
+                        text="Amplitude Scaling Factor."
                     />
                 }
                 onFloatChange={(value) => {handleSimChange("scale", value.toString())}}
@@ -40,8 +39,7 @@ export default function SimParams({ onParamsChange }: { onParamsChange: (params:
                 label={
                     <Parameter 
                         command="-xOff" 
-                        text="Optional Frequency offset value in pts.  "
-                        className="p-1 text-center whitespace-nowrap" 
+                        text="Optional Frequency offset value in pts." 
                     />
                 }
                 onFloatChange={(value) => {handleSimChange("xOff", value.toString())}}
