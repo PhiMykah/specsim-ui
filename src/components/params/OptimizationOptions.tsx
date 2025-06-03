@@ -59,10 +59,10 @@ export default function OptimizationOptions({ onParamsChange }: { onParamsChange
                 label={ 
                     <Parameter 
                         command="-mode" 
-                        text="Optimization mode (lsq, basin, minimize, brute)." 
+                        text="Optimization mode (lsq, basin, minimize, brute, danneal)." 
                     />
                 }
-                options={["lsq", "basin", "minimize", "brute"]}    
+                options={["lsq", "basin", "minimize", "brute", "danneal"]}    
                 onValueChange={(value) => {handleOptChange("mode", value.toString())}}
             />
             

@@ -39,7 +39,21 @@ export default function Home() {
       <header className="text-4xl font-bold row-start-1 text-center">
         Submit Parameters
       </header>
-      <pre className="bg-base-300 p-4 rounded">{JSON.stringify(combinedParams, null, 2)}</pre>
+      <pre className="bg-base-300 p-4 rounded">
+        {JSON.stringify(
+          {
+            ...combinedParams,
+            File: combinedParams.File || {},
+            SimOptions: combinedParams.SimOptions || {},
+            OptOptions: combinedParams.OptOptions || {},
+            OptParams: combinedParams.OptParams || {},
+            ModelParams: combinedParams.ModelParams || {},
+            OtherParams: combinedParams.OtherParams || {},
+          },
+          null,
+          2
+        )}
+      </pre>
       <div className="sticky bottom-0 bg-base-100 z-10 p-4 shadow-md">
         <div className="flex items-center"> 
           <Button onClick={handleSubmit} className="mr-2">

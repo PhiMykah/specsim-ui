@@ -13,6 +13,7 @@ export default function FileParams({ onParamsChange }: { onParamsChange: (params
         out: "",
         apod: "",
         basis: "",
+        res: "",
     });
 
     const handleFileChange = (key: keyof typeof fileParams, path: string) => {
@@ -83,6 +84,16 @@ export default function FileParams({ onParamsChange }: { onParamsChange: (params
                 }
                 mode='save-directory'
                 onFileChange={(path) => {handleFileChange("basis", path)}}
+            />
+            <FilePicker
+                label={ 
+                    <Parameter 
+                        command="-res" 
+                        text="Optional NMRPipe-format Time-Domain Residual" 
+                    /> 
+                }
+                mode='load'
+                onFileChange={(path) => {handleFileChange("res", path)}}
             />
         </ParamWrapper>
     );

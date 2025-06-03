@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ParamWrapper, Parameter } from "@/components/params/Param";
-import { FloatInput, RangeFloatInput } from "@/components/args/NumberInput";
+import { FloatInput, MultiFloatInput, RangeFloatInput } from "@/components/args/NumberInput";
 import { SectionHeader } from "@/components/Section";
 
 export default function OptimizationParams({ onParamsChange }: { onParamsChange: (params: Record<string, unknown>) => void }) {
@@ -36,23 +36,23 @@ export default function OptimizationParams({ onParamsChange }: { onParamsChange:
     
     return (
         <ParamWrapper headerText="Optimization Parameters">
-            <FloatInput 
+            <MultiFloatInput 
                 label={
                     <Parameter 
                         command="-initXDecay" 
                         text="Initial x-axis decay value in Hz." 
                     />
                 }
-                onFloatChange={(value) => {handleOptChange("initXDecay", value.toString())}}
+                onFloatsChange={(value) => {handleOptChange("initXDecay", value.toString())}}
             />
-            <FloatInput 
+            <MultiFloatInput 
                 label={
                     <Parameter 
                         command="-initYDecay" 
                         text="Initial y-axis decay value in Hz." 
                     />
                 }
-                onFloatChange={(value) => {handleOptChange("initYDecay", value.toString())}}
+                onFloatsChange={(value) => {handleOptChange("initYDecay", value.toString())}}
             />
             <FloatInput 
                 label={

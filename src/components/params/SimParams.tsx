@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { ParamWrapper, Parameter } from "@/components/params/Param";
-import { FloatInput } from "@/components/args/NumberInput";
+import { FloatInput, IntegerInput, MultiFloatInput } from "@/components/args/NumberInput";
 
 export default function SimParams({ onParamsChange }: { onParamsChange: (params: Record<string, unknown>) => void }) {
     const [simParams, setSimParams] = useState({
+        ndim: "",
         scale: "",
-        xOff: "",
+        off: "",
     });
 
     const handleSimChange = (key: keyof typeof simParams, value: string) => {
@@ -26,6 +27,15 @@ export default function SimParams({ onParamsChange }: { onParamsChange: (params:
 
     return (
         <ParamWrapper headerText="Simulation Options">
+            <IntegerInput 
+                label={
+                    <Parameter
+                        command='-ndim'
+                        text='Number of dimensions to simulate.'
+                    />
+                }
+                onIntegerChange={(value) => {handleSimChange("ndim", value.toString())}}
+            />
             <FloatInput 
                 label={
                     <Parameter 
@@ -35,14 +45,14 @@ export default function SimParams({ onParamsChange }: { onParamsChange: (params:
                 }
                 onFloatChange={(value) => {handleSimChange("scale", value.toString())}}
             /> 
-            <FloatInput 
+            <MultiFloatInput
                 label={
                     <Parameter 
-                        command="-xOff" 
-                        text="Optional Frequency offset value in pts." 
+                        command="-off" 
+                        text="Optional Frequency offset values in pts." 
                     />
                 }
-                onFloatChange={(value) => {handleSimChange("xOff", value.toString())}}
+                onFloatsChange={(value) => {handleSimChange("off", value.toString())}}
             />
             
         </ParamWrapper>
