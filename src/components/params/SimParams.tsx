@@ -36,14 +36,14 @@ export default function SimParams({ onParamsChange }: { onParamsChange: (params:
                 }
                 onIntegerChange={(value) => {handleSimChange("ndim", value.toString())}}
             />
-            <FloatInput 
+            <MultiFloatInput 
                 label={
                     <Parameter 
                         command="-scale" 
-                        text="Amplitude Scaling Factor."
+                        text="Amplitude Scaling Factors."
                     />
                 }
-                onFloatChange={(value) => {handleSimChange("scale", value.toString())}}
+                onFloatsChange={(value) => {handleSimChange("scale", value.toString())}}
             /> 
             <MultiFloatInput
                 label={

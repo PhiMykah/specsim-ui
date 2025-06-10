@@ -11,20 +11,27 @@ export default function Home() {
   const { combinedParams } = useGlobalParams();
   const router = useRouter();
 
-  const handleSubmit = () => {
-    console.log("Combined Parameters:", combinedParams);
-    const flattenedParams = Object.entries(combinedParams).reduce<Record<string, unknown>>((acc, [key, value]) => {
-      if (typeof value === "object" && value !== null) {
-        Object.entries(value).forEach(([nestedKey, nestedValue]) => {
-          acc[nestedKey] = nestedValue;
-        });
-      } else {
-        acc[key] = value;
-      }
-      return acc;
-    }, {});
+  const handleSubmit = async () => {
+    try {
+      console.log("Combined Parameters:", combinedParams);
+      const flattenedParams = Object.entries(combinedParams).reduce<Record<string, unknown>>((acc, [key, value]) => {
+        if (typeof value === "object" && value !== null) {
+          Object.entries(value).forEach(([nestedKey, nestedValue]) => {
+            acc[nestedKey] = nestedValue;
+          });
+        } else {
+          acc[key] = value;
+        }
+        return acc;
+      }, {});
 
-    console.log("Flattened Parameters:", flattenedParams);
+      console.log("Flattened Parameters:", flattenedParams);
+
+      const result = await invoke<string>("submit_params", { params: flattenedParams });
+      console.log("Result from Python:", result);
+    } catch(error) {
+      console.error("Error submitting parameters:", error);
+    }
   };
 
   const handleGoBack = () => {
