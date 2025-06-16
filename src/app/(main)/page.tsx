@@ -1,21 +1,41 @@
 "use client";
 import { Button } from "@/components/ui/button";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { invoke } from "@tauri-apps/api/core";
+// import { invoke } from "@tauri-apps/api/core";
 import { useGlobalParams } from "@/components/context/GlobalParamsContext";
 import { useRouter } from "next/navigation";
 import { sections } from "@/components/context/sections";
 import { ChevronLeft } from "lucide-react";
+// import { listen } from "@tauri-apps/api/event";
+// import Plot from "react-plotly.js"; // if using Plotly
+// import { useEffect, useState } from "react";
 
 export default function Home() {
   const { combinedParams } = useGlobalParams();
   const router = useRouter();
+  // const [spectrum, setSpectrum] = useState<number[][] | null>(null);
+  
+  // useEffect(() => {
+  //   const unlisten = listen<string>("spectrum_update", event => {
+  //     try {
+  //       const data = JSON.parse(event.payload);
+  //       if (data.spectrum) {
+  //         setSpectrum(data.spectrum);
+  //       }
+  //     } catch (err) {
+  //       console.error("Failed to parse spectrum update:", err);
+  //     }
+  //   });
 
-  const handleSubmit = async () => {
+  //   return () => {
+  //     unlisten.then(f => f());
+  //   };
+  // }, []);
+
+  const handleSubmit = () => {
     try {
       console.log("Combined Parameters:", combinedParams);
       const flattenedParams = Object.entries(combinedParams).reduce<Record<string, unknown>>((acc, [key, value]) => {
-        if (typeof value === "object" && value !== null) {
+        if (typeof value === "object") {
           Object.entries(value).forEach(([nestedKey, nestedValue]) => {
             acc[nestedKey] = nestedValue;
           });
@@ -27,8 +47,11 @@ export default function Home() {
 
       console.log("Flattened Parameters:", flattenedParams);
 
-      const result = await invoke<string>("submit_params", { params: flattenedParams });
-      console.log("Result from Python:", result);
+      // const result = await invoke<string>("run_optimization", { params: flattenedParams });
+      // console.log("Result from Python:", result);
+      const result=1
+      router.push("/Plot?data=" + encodeURIComponent(result));
+
     } catch(error) {
       console.error("Error submitting parameters:", error);
     }
@@ -50,12 +73,12 @@ export default function Home() {
         {JSON.stringify(
           {
             ...combinedParams,
-            File: combinedParams.File || {},
-            SimOptions: combinedParams.SimOptions || {},
-            OptOptions: combinedParams.OptOptions || {},
-            OptParams: combinedParams.OptParams || {},
-            ModelParams: combinedParams.ModelParams || {},
-            OtherParams: combinedParams.OtherParams || {},
+            File: combinedParams.File,
+            SimOptions: combinedParams.SimOptions,
+            OptOptions: combinedParams.OptOptions,
+            OptParams: combinedParams.OptParams,
+            ModelParams: combinedParams.ModelParams,
+            OtherParams: combinedParams.OtherParams,
           },
           null,
           2

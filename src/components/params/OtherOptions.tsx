@@ -1,33 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ParamWrapper, Parameter } from "@/components/params/Param";
 import BooleanInput from "@/components/args/BooleanInput";
+import { useGlobalParams } from "@/components/context/GlobalParamsContext";
 
-export default function OtherOptions({ onParamsChange }: { onParamsChange: (params: Record<string, unknown>) => void }) {
-    const [otherParams, setOtherParams] = useState({
-        ts: "",
-        nots: "",
-        notdd: "",
-        tdd: "",
-        nottdj: "",
-        tdj: "",
-    })
+export default function OtherOptions() {
+    const { combinedParams, updateParams } = useGlobalParams();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const otherParams = combinedParams.OtherParams;
 
     const handleOtherChange = (key: keyof typeof otherParams, value: string) => {
-        setOtherParams((prev) => ({ ...prev, [key]: value }));
+        updateParams("OtherOptions", {[key]: value });
     };
     
-    // useEffect(() => {
-    //     const timeout = setTimeout(() => {
-    //         console.log("Sim parameters have changed:", otherParams);
-    //     }, 500); // delay 500ms
-      
-    //     return () => { clearTimeout(timeout); } // cleanup
-    // }, [otherParams]);
-
-    useEffect(() => {
-        onParamsChange(otherParams);
-    }, [otherParams]);
-
     return (
         <ParamWrapper headerText="Additional Parameters" >
             <BooleanInput 
@@ -37,6 +21,8 @@ export default function OtherOptions({ onParamsChange }: { onParamsChange: (para
                         text="Scale Time-Domain Signal by Decay Integral (OFF/ON)."
                     />
                 }
+                section="OtherOptions"
+                paramKey="ts"
                 onBoolChange={(value) => {handleOtherChange("nots", (!value).toString()); handleOtherChange("ts", value.toString())}}
             />
             <BooleanInput 
@@ -47,6 +33,8 @@ export default function OtherOptions({ onParamsChange }: { onParamsChange: (para
                         className="flex flex-wrap text-wrap gap-2 items-center"
                     />
                 }
+                section="OtherOptions"
+                paramKey="tdd"
                 onBoolChange={(value) => {handleOtherChange("notdd", (!value).toString()); handleOtherChange("tdd", value.toString())}}
             />
             <BooleanInput 
@@ -56,6 +44,8 @@ export default function OtherOptions({ onParamsChange }: { onParamsChange: (para
                         text="Interpret J-Modulation in Time Domain (OFF/ON)."
                     />
                 }
+                section="OtherOptions"
+                paramKey="tdj"
                 onBoolChange={(value) => {handleOtherChange("nottdj", (!value).toString()); handleOtherChange('tdj', value.toString())}}
             />
         </ParamWrapper>

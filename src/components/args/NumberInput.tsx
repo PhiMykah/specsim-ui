@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { useGlobalParams } from "@/components/context/GlobalParamsContext";
 
 /* -------------------------------------------------------------------------- */
 /*                                    Float                                   */
@@ -15,22 +16,26 @@ const floatInputSchema = z.object({
 
 interface FloatInputProps {
     label: string | React.ReactNode;
-    onFloatChange?: (value: number) => void;
+    section: string; // Section name for globalParams
+    paramKey: string; // Key for the parameter in the section
 }
 
 export function FloatInput({
     label,
-    onFloatChange,
+    section,
+    paramKey,
 }: FloatInputProps) {
+    const { combinedParams, updateParams } = useGlobalParams(); // Access globalParams
     const form = useForm<z.infer<typeof floatInputSchema>>({
         resolver: zodResolver(floatInputSchema),
         defaultValues: {
-            floatValue: 0,
+            floatValue: Number(combinedParams[section]?.[paramKey]) || 0,
         },
     });
 
     function onSubmit(data: z.infer<typeof floatInputSchema>) {
-        if (onFloatChange) onFloatChange(data.floatValue);
+        updateParams(section, { [paramKey]: data.floatValue });
+        console.log(`Updated ${section}.${paramKey}:`, data.floatValue); // Log updated value
     }
 
     return (
@@ -114,24 +119,28 @@ const integerInputSchema = z.object({
 
 interface IntegerInputProps {
     label: string | React.ReactNode;
-    onIntegerChange?: (value: number) => void;
+    section: string; // Section name for globalParams
+    paramKey: string; // Key for the parameter in the section
     positiveOnly?: boolean; // New prop to restrict input to positive integers
 }
 
 export function IntegerInput({
     label,
-    onIntegerChange,
+    section,
+    paramKey,
     positiveOnly = false, // Default to false
 }: IntegerInputProps) {
+    const { combinedParams, updateParams } = useGlobalParams(); // Access globalParams
     const form = useForm<z.infer<typeof integerInputSchema>>({
         resolver: zodResolver(integerInputSchema),
         defaultValues: {
-            integerValue: 0,
+            integerValue: Number(combinedParams[section]?.[paramKey]) || 0,
         },
     });
 
     function onSubmit(data: z.infer<typeof integerInputSchema>) {
-        if (onIntegerChange) onIntegerChange(data.integerValue);
+        updateParams(section, { [paramKey]: data.integerValue }); // Update globalParams
+        console.log(`Updated ${section}.${paramKey}:`, data.integerValue); // Log updated value
     }
 
     return (
@@ -197,14 +206,22 @@ export function IntegerInput({
 
 interface MultiFloatInputProps {
     label: string | React.ReactNode;
+    section: string;
+    paramKey: string;
     onFloatsChange?: (values: number[]) => void;
 }
 
 export function MultiFloatInput({
     label,
+    section,
+    paramKey,
     onFloatsChange,
 }: MultiFloatInputProps) {
-    const [floats, setFloats] = React.useState<number[]>([]);
+    const { combinedParams, updateParams } = useGlobalParams(); // Access globalParams
+    const [floats, setFloats] = React.useState<number[]>(
+        Array.isArray(combinedParams[section]?.[paramKey])
+          ? combinedParams[section]?.[paramKey]
+          : []);    
     const [currentInput, setCurrentInput] = React.useState<string>("");
 
     const addFloat = () => {
@@ -212,8 +229,10 @@ export function MultiFloatInput({
         if (!isNaN(numericValue)) {
             const updatedFloats = [...floats, numericValue];
             setFloats(updatedFloats);
-            setCurrentInput("");
             if (onFloatsChange) onFloatsChange(updatedFloats);
+            updateParams(section, { [paramKey]: updatedFloats }); // Update globalParams
+            console.log(`Updated ${section}.${paramKey} with new value:`, numericValue); // Log updated value
+            setCurrentInput("");
         }
     };
 
@@ -221,6 +240,8 @@ export function MultiFloatInput({
         const updatedFloats = floats.filter((_, i) => i !== index);
         setFloats(updatedFloats);
         if (onFloatsChange) onFloatsChange(updatedFloats);
+        updateParams(section, { [paramKey]: updatedFloats }); // Update globalParams
+        console.log(`Updated ${section}.${paramKey}:`, updatedFloats); // Log updated value
     };
 
     return (
@@ -285,7 +306,7 @@ export function MultiFloatInput({
                 </button>
             </div>
             <div className="flex flex-wrap gap-2">
-                {floats.map((float, index) => (
+                {(Array.isArray(combinedParams[section]?.[paramKey]) ? combinedParams[section]?.[paramKey] : floats).map((float, index) => (
                     <div
                         key={index}
                         className="flex indicator justify-between items-center bg-base-100 p-2 rounded"
@@ -311,15 +332,20 @@ export function MultiFloatInput({
 
 interface RangeFloatInputProps {
     label: string | React.ReactNode;
+    section: string;
+    paramKey: string;
     onRangeChange?: (range: { lower: number; upper: number }) => void;
 }
 
 export function RangeFloatInput({
     label,
+    section,
+    paramKey,
     onRangeChange,
 }: RangeFloatInputProps) {
     const [lower, setLower] = React.useState<string>("");
     const [upper, setUpper] = React.useState<string>("");
+    const { combinedParams, updateParams } = useGlobalParams(); // Access globalParams
 
     const handleLowerChange = (value: string) => {
         setLower(value);
@@ -329,6 +355,8 @@ export function RangeFloatInput({
 
         if (!isNaN(lowerValue) && !isNaN(upperValue) && lowerValue < upperValue) {
             if (onRangeChange) onRangeChange({ lower: lowerValue, upper: upperValue });
+            updateParams(section, { [paramKey]: {lowerValue, upperValue} }); // Update globalParams
+            console.log(`Updated ${section}.${paramKey} lower:`, lowerValue); // Log updated value
         }
     };
 
@@ -340,6 +368,8 @@ export function RangeFloatInput({
 
         if (!isNaN(lowerValue) && !isNaN(upperValue) && lowerValue < upperValue) {
             if (onRangeChange) onRangeChange({ lower: lowerValue, upper: upperValue });
+            updateParams(section, { [paramKey]: {lowerValue, upperValue} }); // Update globalParams
+            console.log(`Updated ${section}.${paramKey} upper:`, upperValue); // Log updated value
         }
     };
 

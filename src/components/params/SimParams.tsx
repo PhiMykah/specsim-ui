@@ -1,29 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ParamWrapper, Parameter } from "@/components/params/Param";
-import { FloatInput, IntegerInput, MultiFloatInput } from "@/components/args/NumberInput";
+import { IntegerInput, MultiFloatInput } from "@/components/args/NumberInput";
+import { useGlobalParams } from "@/components/context/GlobalParamsContext";
 
-export default function SimParams({ onParamsChange }: { onParamsChange: (params: Record<string, unknown>) => void }) {
-    const [simParams, setSimParams] = useState({
-        ndim: "",
-        scale: "",
-        off: "",
-    });
+export default function SimParams() {
+    const { combinedParams, updateParams } = useGlobalParams();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const simParams = combinedParams.SimOptions;
 
     const handleSimChange = (key: keyof typeof simParams, value: string) => {
-        setSimParams((prev) => ({ ...prev, [key]: value }));
+        updateParams("SimOptions", { [key]: value });
     };
-    
-    // useEffect(() => {
-    //     const timeout = setTimeout(() => {
-    //         console.log("Sim parameters have changed:", simParams);
-    //     }, 500); // delay 500ms
-      
-    //     return () => { clearTimeout(timeout); } // cleanup
-    // }, [simParams]);
-
-    useEffect(() => {
-        onParamsChange(simParams);
-    }, [simParams]);
 
     return (
         <ParamWrapper headerText="Simulation Options">
@@ -34,7 +21,8 @@ export default function SimParams({ onParamsChange }: { onParamsChange: (params:
                         text='Number of dimensions to simulate.'
                     />
                 }
-                onIntegerChange={(value) => {handleSimChange("ndim", value.toString())}}
+                section="SimOptions"
+                paramKey="ndim"
             />
             <MultiFloatInput 
                 label={
@@ -43,6 +31,8 @@ export default function SimParams({ onParamsChange }: { onParamsChange: (params:
                         text="Amplitude Scaling Factors."
                     />
                 }
+                section="SimOptions"
+                paramKey="scale"
                 onFloatsChange={(value) => {handleSimChange("scale", value.toString())}}
             /> 
             <MultiFloatInput
@@ -52,6 +42,8 @@ export default function SimParams({ onParamsChange }: { onParamsChange: (params:
                         text="Optional Frequency offset values in pts." 
                     />
                 }
+                section="SimOptions"
+                paramKey="off"
                 onFloatsChange={(value) => {handleSimChange("off", value.toString())}}
             />
             

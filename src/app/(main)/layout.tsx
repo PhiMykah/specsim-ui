@@ -22,21 +22,32 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-export default function RootLayout({
+export default function MainLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
 
   return (
-    <html>
-      <body>
-        <main
-          className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} text-base-content antialiased w-full`}
-        >
-          {children}
-        </main>
-      </body>
-    </html> 
+    <div>
+      <ThemeProvider
+        attribute="data-theme"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
+      <SidebarProvider className="relative bg-base-200">
+        <GlobalParamsProvider>
+          <AppSidebar />
+          <Trigger />
+          <div
+            className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} text-base-content antialiased w-full`}
+          >
+            {children}
+          </div>
+        </GlobalParamsProvider>
+      </SidebarProvider>
+      </ThemeProvider>
+    </div> 
   );
 }

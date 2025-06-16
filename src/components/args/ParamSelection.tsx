@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useGlobalParams } from "@/components/context/GlobalParamsContext";
 
 import { 
     DropdownMenu, 
@@ -21,11 +22,14 @@ import {
 
 interface ParamSelectionProps {
     label: string | React.ReactNode
+    section: string,
+    paramKey: string,
     options: string[];
     onValueChange?: (value:string) => void;
 }
 
-export function ParamSelection({ label, options, onValueChange }: ParamSelectionProps) {
+export function ParamSelection({ label, section, paramKey, options, onValueChange }: ParamSelectionProps) {
+    const { combinedParams, updateParams } = useGlobalParams();
     const optionsSchema = z.object({
         selectedOption: z
             .string()
@@ -37,7 +41,9 @@ export function ParamSelection({ label, options, onValueChange }: ParamSelection
     const form = useForm<z.infer<typeof optionsSchema>>({
         resolver: zodResolver(optionsSchema),
         defaultValues: {
-            selectedOption: "",
+            selectedOption: typeof combinedParams[section]?.[paramKey] === "string" 
+                ? combinedParams[section]?.[paramKey] 
+                : "",
         },
     });
 
@@ -49,6 +55,8 @@ export function ParamSelection({ label, options, onValueChange }: ParamSelection
 
     function onSubmit(data : z.infer<typeof optionsSchema>) {
         if(onValueChange) onValueChange(data.selectedOption);
+        updateParams(section, { [paramKey]: data.selectedOption }); // Update globalParams
+        console.log(`Updated ${section}.${paramKey}:`, data.selectedOption); // Log updated value
     }
     return (
         <Form {...form}>

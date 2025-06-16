@@ -1,39 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ParamWrapper, Parameter } from "@/components/params/Param";
 import { FloatInput, IntegerInput, MultiFloatInput } from "@/components/args/NumberInput";
 import ParamSelection from "@/components/args/ParamSelection";
 import BooleanInput from "@/components/args/BooleanInput";
+import { useGlobalParams } from "@/components/context/GlobalParamsContext";
 
-export default function OptimizationOptions({ onParamsChange }: { onParamsChange: (params: Record<string, unknown>) => void }) {
-    const [optParams, setOptParams] = useState({
-        rx1: "",
-        rxn: "",
-        mode: "",
-        trials: "",
-        maxFail: "",
-        iseed: "",
-        verb: "",
-        noverb: "",
-        report: "",
-        freq: "",
-        step: "",
-    });
+export default function OptimizationOptions() {
+    const { combinedParams, updateParams } = useGlobalParams();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const optParams = combinedParams.OptOptions;
 
     const handleOptChange = (key: keyof typeof optParams, value: string | string[]) => {
-        setOptParams((prev) => ({ ...prev, [key]: value }));
+        updateParams("OptOptions", { [key]: value });
     };
-    
-    // useEffect(() => {
-    //     const timeout = setTimeout(() => {
-    //         console.log("Sim parameters have changed:", optParams);
-    //     }, 500); // delay 500ms
-      
-    //     return () => { clearTimeout(timeout); } // cleanup
-    // }, [optParams]);
-
-    useEffect(() => {
-        onParamsChange(optParams);
-    }, [optParams]);
     
     return (
         <ParamWrapper headerText="Optimization Options">
@@ -44,7 +23,8 @@ export default function OptimizationOptions({ onParamsChange }: { onParamsChange
                         text="First Point Location for Calculating Residual." 
                     />
                 }
-                onFloatChange={(value) => {handleOptChange('rx1', value.toString())}}
+                section="OptOptions"
+                paramKey="rx1"
             />
             <FloatInput 
                 label={
@@ -53,7 +33,8 @@ export default function OptimizationOptions({ onParamsChange }: { onParamsChange
                         text="Last Point Location for Calculating Residual."
                     />
                 }
-                onFloatChange={(value) => {handleOptChange('rxn', value.toString())}}
+                section="OptOptions"
+                paramKey="rxn"
             />
             <ParamSelection 
                 label={ 
@@ -62,6 +43,8 @@ export default function OptimizationOptions({ onParamsChange }: { onParamsChange
                         text="Optimization mode (lsq, basin, minimize, brute, danneal)." 
                     />
                 }
+                section="OptOptions"
+                paramKey="mode"
                 options={["lsq", "basin", "minimize", "brute", "danneal"]}    
                 onValueChange={(value) => {handleOptChange("mode", value.toString())}}
             />
@@ -73,7 +56,8 @@ export default function OptimizationOptions({ onParamsChange }: { onParamsChange
                         text="Number of Optimization Trials." 
                     />
                 }
-                onIntegerChange={(value) => {handleOptChange("trials", value.toString())}}
+                section="OptOptions"
+                paramKey="trials"
                 positiveOnly={true}
             />
             
@@ -84,7 +68,8 @@ export default function OptimizationOptions({ onParamsChange }: { onParamsChange
                         text="Max Optimization Fails Before Quitting." 
                     />
                 }
-                onIntegerChange={(value) => {handleOptChange("maxFail", value.toString())}}
+                section="OptOptions"
+                paramKey="maxFail"
                 positiveOnly={true}
             />
             
@@ -95,7 +80,8 @@ export default function OptimizationOptions({ onParamsChange }: { onParamsChange
                         text="Random Number Seed."
                     />
                 }
-                onIntegerChange={(value) => {handleOptChange("iseed", value.toString())}}
+                section="OptOptions"
+                paramKey="iseed"
             />
             
             <BooleanInput 
@@ -105,6 +91,8 @@ export default function OptimizationOptions({ onParamsChange }: { onParamsChange
                         text="Verbose Mode (OFF/ON)." 
                     />
                 }
+                section="OptOptions"
+                paramKey="verb"
                 onBoolChange={(value) => {handleOptChange("noverb", (!value).toString()); handleOptChange("verb", value.toString())}}
             />
 
@@ -116,6 +104,8 @@ export default function OptimizationOptions({ onParamsChange }: { onParamsChange
                         text="Report Mode (OFF/ON)." 
                     />
                 }
+                section="OptOptions"
+                paramKey="report"
                 onBoolChange={(value) => {handleOptChange("report", value.toString())}}
             />
             
@@ -126,6 +116,8 @@ export default function OptimizationOptions({ onParamsChange }: { onParamsChange
                         text="Frequency Positions (list of floats)." 
                     />
                 }
+                section="OptOptions"
+                paramKey="freq"
                 onFloatsChange={(value) => {handleOptChange("freq", value.toString())}}
             />
             
@@ -137,7 +129,8 @@ export default function OptimizationOptions({ onParamsChange }: { onParamsChange
                         text="Step-size for optimizations that require step-size (e.g. basin)."
                     />
                 }
-                onFloatChange={(value) => {handleOptChange("step", value.toString())}}
+                section="OptOptions"
+                paramKey="step"
             />
             
         </ParamWrapper>

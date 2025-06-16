@@ -1,31 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ParamWrapper, Parameter } from "@/components/params/Param";
 import { MultiFloatInput } from "@/components/args/NumberInput";
 import { ParamSelection } from "@/components/args/ParamSelection";
+import { useGlobalParams } from "@/components/context/GlobalParamsContext";
 
-export default function ModelParams({ onParamsChange }: { onParamsChange: (params: Record<string, unknown>) => void }) {
-    const [modelParams, setModelParams] = useState({
-        model: "",
-        j1: "",
-        j2: "",
-        j3: "",
-    })
+export default function ModelParams() {
+    const { combinedParams, updateParams } = useGlobalParams();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const modelParams = combinedParams.ModelParams;
 
     const handleModelChange = (key: keyof typeof modelParams, value: string) => {
-        setModelParams((prev) => ({ ...prev, [key]: value }));
+        updateParams("ModelParams", {[key]: value });
     };
-    
-    // useEffect(() => {
-    //     const timeout = setTimeout(() => {
-    //         console.log("Sim parameters have changed:", modelParams);
-    //     }, 500); // delay 500ms
-      
-    //     return () => { clearTimeout(timeout); } // cleanup
-    // }, [modelParams]);
-
-    useEffect(() => {
-        onParamsChange(modelParams);
-    }, [modelParams]);
     
     return (
         <ParamWrapper headerText="Model Parameters">
@@ -36,6 +22,8 @@ export default function ModelParams({ onParamsChange }: { onParamsChange: (param
                         text="Optimization mode (exponential, gaussian, composite)." 
                     />
                 }
+                section="ModelParams"
+                paramKey="model"
                 options={["exp", "gauss", "comp"]}    
                 onValueChange={(value) => {handleModelChange("model", value.toString())}}
             />
@@ -47,6 +35,8 @@ export default function ModelParams({ onParamsChange }: { onParamsChange: (param
                         text="Coupling 1 (Cosine Modulation, Pts Hz ppm %%)."
                     />
                 }
+                section="ModelParams"
+                paramKey="j1"
                 onFloatsChange={(value) => {handleModelChange("j1", value.toString())}}
             />
             
@@ -57,6 +47,8 @@ export default function ModelParams({ onParamsChange }: { onParamsChange: (param
                         text="Coupling 2 (Cosine Modulation, Pts Hz ppm %%)."
                     />
                 }
+                section="ModelParams"
+                paramKey="j2"
                 onFloatsChange={(value) => {handleModelChange("j2", value.toString())}}
             />
             
@@ -67,6 +59,8 @@ export default function ModelParams({ onParamsChange }: { onParamsChange: (param
                         text="Coupling 3 (Cosine Modulation, Pts Hz ppm %%)."
                     />
                 }
+                section="ModelParams"
+                paramKey="j3"
                 onFloatsChange={(value) => {handleModelChange("j3", value.toString())}}
             />
             

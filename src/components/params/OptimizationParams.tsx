@@ -1,38 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ParamWrapper, Parameter } from "@/components/params/Param";
 import { FloatInput, MultiFloatInput, RangeFloatInput } from "@/components/args/NumberInput";
 import { SectionHeader } from "@/components/Section";
+import { useGlobalParams } from "@/components/context/GlobalParamsContext";
 
-export default function OptimizationParams({ onParamsChange }: { onParamsChange: (params: Record<string, unknown>) => void }) {
-    const [optParams, setOptParams] = useState({
-        initXDecay: "",
-        initYDecay: "",
-        xP0: "",
-        xP1: "",
-        yP0: "",
-        yP1: "",
-        xDecayBounds: "",
-        yDecayBounds: "",
-        ampBounds: "",
-        p0Bounds: "",
-        p1Bounds: "",
-    })
+export default function OptimizationParams() {
+    const { combinedParams, updateParams } = useGlobalParams();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const optParams = combinedParams.OptParams;
 
-    const handleOptChange = (key: keyof typeof optParams, value: string) => {
-        setOptParams((prev) => ({ ...prev, [key]: value }));
+    const handleOptChange = (key: keyof typeof optParams, value: string | string[]) => {
+        updateParams("OptParams", { [key]: value });
     };
-    
-    // useEffect(() => {
-    //     const timeout = setTimeout(() => {
-    //         console.log("Sim parameters have changed:", optParams);
-    //     }, 500); // delay 500ms
-      
-    //     return () => { clearTimeout(timeout); } // cleanup
-    // }, [optParams]);
-
-    useEffect(() => {
-        onParamsChange(optParams);
-    }, [optParams]);
     
     return (
         <ParamWrapper headerText="Optimization Parameters">
@@ -43,6 +22,8 @@ export default function OptimizationParams({ onParamsChange }: { onParamsChange:
                         text="Initial x-axis decay value in Hz." 
                     />
                 }
+                section="OptParams"
+                paramKey="initXDecay"
                 onFloatsChange={(value) => {handleOptChange("initXDecay", value.toString())}}
             />
             <MultiFloatInput 
@@ -52,6 +33,8 @@ export default function OptimizationParams({ onParamsChange }: { onParamsChange:
                         text="Initial y-axis decay value in Hz." 
                     />
                 }
+                section="OptParams"
+                paramKey="initYDecay"
                 onFloatsChange={(value) => {handleOptChange("initYDecay", value.toString())}}
             />
             <FloatInput 
@@ -61,7 +44,8 @@ export default function OptimizationParams({ onParamsChange }: { onParamsChange:
                         text="Zero Order Phase of All Signals for x-axis." 
                     />
                 }
-                onFloatChange={(value) => {handleOptChange("xP0", value.toString())}}
+                section="OptParams"
+                paramKey="xP0"
             />
             <FloatInput 
                 label={
@@ -70,7 +54,8 @@ export default function OptimizationParams({ onParamsChange }: { onParamsChange:
                         text="First Order Phase of All Signals for x-axis." 
                     />
                 }
-                onFloatChange={(value) => {handleOptChange("xP1", value.toString())}}
+                section="OptParams"
+                paramKey="xP1"
             />
             <FloatInput 
                 label={
@@ -79,7 +64,8 @@ export default function OptimizationParams({ onParamsChange }: { onParamsChange:
                         text="Zero Order Phase of All Signals for y-axis." 
                     />
                 }
-                onFloatChange={(value) => {handleOptChange("yP0", value.toString())}}
+                section="OptParams"
+                paramKey="yP0"
             />
             <FloatInput 
                 label={
@@ -88,7 +74,8 @@ export default function OptimizationParams({ onParamsChange }: { onParamsChange:
                         text="First Order Phase of All Signals for y-axis." 
                     />
                 }
-                onFloatChange={(value) => {handleOptChange("yP1", value.toString())}}
+                section="OptParams"
+                paramKey="yP1"
             />
             <SectionHeader text="Bounds Options" />
             <RangeFloatInput
@@ -98,6 +85,8 @@ export default function OptimizationParams({ onParamsChange }: { onParamsChange:
                         text="Lower and upper bounds for x-decay in Hz." 
                     />
                 }
+                section="OptParams"
+                paramKey="ampBounds"
                 onRangeChange={({lower, upper}) => {handleOptChange("xDecayBounds", `${lower.toString()}, ${upper.toString()}`)}}
             />
             <RangeFloatInput 
@@ -107,6 +96,8 @@ export default function OptimizationParams({ onParamsChange }: { onParamsChange:
                         text="Lower and upper bounds for y-decay in Hz." 
                     />
                 }
+                section="OptParams"
+                paramKey="yDecayBounds"
                 onRangeChange={({lower, upper}) => {handleOptChange("yDecayBounds", `${lower.toString()}, ${upper.toString()}`)}}
             />
             <RangeFloatInput 
@@ -116,6 +107,8 @@ export default function OptimizationParams({ onParamsChange }: { onParamsChange:
                         text="Lower and upper bounds for amplitude." 
                     />
                 }
+                section="OptParams"
+                paramKey="ampBounds"
                 onRangeChange={({lower, upper}) => {handleOptChange("ampBounds", `${lower.toString()}, ${upper.toString()}`)}}
             />
             <RangeFloatInput 
@@ -125,6 +118,8 @@ export default function OptimizationParams({ onParamsChange }: { onParamsChange:
                         text="Lower and upper bounds for p0 phase correction." 
                     />
                 }
+                section="OptParams"
+                paramKey="p0Bounds"
                 onRangeChange={({lower, upper}) => {handleOptChange("p0Bounds", `${lower.toString()}, ${upper.toString()}`)}}
             />
             <RangeFloatInput 
@@ -134,6 +129,8 @@ export default function OptimizationParams({ onParamsChange }: { onParamsChange:
                         text="Lower and upper bounds for p1 phase correction." 
                     />
                 }
+                section="OptParams"
+                paramKey="p1Bounds"
                 onRangeChange={({lower, upper}) => {handleOptChange("p1Bounds", `${lower.toString()}, ${upper.toString()}`)}}
             />
         </ParamWrapper>

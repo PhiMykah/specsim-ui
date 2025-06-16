@@ -28,6 +28,10 @@ def setVectorParam(params : dict, key : str, ndim : int) -> None:
                     value = value[:ndim]
             params[key] = value
 
+def emit_spectrum_update(step_result: dict):
+    print(json.dumps(step_result))
+    sys.stdout.flush()
+    
 if __name__ == "__main__":
     params : dict = json.loads(sys.stdin.read())
     ndim : int = int(params.get("ndim") or 2) if params.get("ndim") != "" else 2

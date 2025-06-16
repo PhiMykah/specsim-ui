@@ -1,14 +1,23 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { useGlobalParams } from "@/components/context/GlobalParamsContext";
 
 interface BooleanInputProps {
     label: string | React.ReactNode;
-    value?: boolean;
+    section: string;
+    paramKey: string;
     onBoolChange?: (value: boolean) => void;
 }
 
-export function BooleanInput({ label, value, onBoolChange }: BooleanInputProps) {
+export function BooleanInput({ label, section, paramKey, onBoolChange }: BooleanInputProps) {
+    const { combinedParams, updateParams } = useGlobalParams();
+
+    const value = Boolean(combinedParams[section]?.[paramKey]);
+
     const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (onBoolChange) onBoolChange(event.target.checked);
+        const newValue = event.target.checked;
+        if (onBoolChange) onBoolChange(newValue);
+        updateParams(section, { [paramKey]: newValue });
+        console.log(`Updated ${section}.${paramKey}:`, newValue); // Log updated value
     };
 
     return (
@@ -22,6 +31,6 @@ export function BooleanInput({ label, value, onBoolChange }: BooleanInputProps) 
             />
         </div>
     );
-};
+}
 
 export default BooleanInput;

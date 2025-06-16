@@ -1,7 +1,7 @@
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 use std::time::{SystemTime, UNIX_EPOCH};
-use std::process::{Command, Stdio};
-use std::io::Write;
+// use tauri::Window;
+// use tokio::process::Command;
+// use tauri::Manager; // Required for `emit`
 
 #[tauri::command]
 fn greet() -> String {
@@ -10,41 +10,35 @@ fn greet() -> String {
   format!("Hello world from Rust! Current epoch: {}", epoch_ms)
 }
 
-#[tauri::command]
-fn submit_params(params: serde_json::Value) -> Result<String, String> {
-  // Path to the Python script
-  let script_path = "../src-py/process.py";
+// #[tauri::command]
+// async fn run_optimization(window: Window, params: serde_json::Value) -> Result<String, String> {
+//   let serialized = serde_json::to_string(&params).map_err(|e| e.to_string())?;
 
-  // Spawn the Python process
-  let mut process = Command::new("python")
-  .arg(script_path)
-  .stdin(Stdio::piped())
-  .stdout(Stdio::piped())
-  .spawn()
-  .map_err(|e| format!("Failed to start Python process: {}", e))?;
+//   let mut child = Command::new("python")
+//         .arg("src-py/optimizer.py") // adjust this path as needed
+//         .stdin(std::process::Stdio::piped())
+//         .stdout(std::process::Stdio::piped())
+//         .spawn()
+//         .map_err(|e| format!("Failed to start Python script: {}", e))?;
 
-  // Write the JSON data to the Python script's stdin
-  if let Some(stdin) = process.stdin.as_mut() {
-    stdin
-        .write_all(params.to_string().as_bytes())
-        .map_err(|e| format!("Failed to write to Python stdin: {}", e))?;
-  }
+//   // Pass the parameters via stdin
+//   if let Some(mut stdin) = child.stdin.take() {
+//       use tokio::io::AsyncWriteExt;
+//       stdin.write_all(serialized.as_bytes()).await.map_err(|e| e.to_string())?;
+//   }
 
-  // Read the output from the Python script
-  let output = process
-  .wait_with_output()
-  .map_err(|e| format!("Failed to read Python output: {}", e))?;
+//   let stdout = child.stdout.take().ok_or("Failed to open stdout")?;
+//   use tokio::io::{AsyncBufReadExt, BufReader};
+//   let mut reader = BufReader::new(stdout).lines();
 
-  if output.status.success() {
-      let result = String::from_utf8(output.stdout)
-          .map_err(|e| format!("Failed to parse Python output: {}", e))?;
-      Ok(result)
-  } else {
-      let error = String::from_utf8(output.stderr)
-          .map_err(|e| format!("Failed to parse Python error output: {}", e))?;
-      Err(error)
-  }
-}
+//   // Stream each line back to the frontend
+//   while let Some(line) = reader.next_line().await.map_err(|e| e.to_string())? {
+//       window.emit("spectrum_update", line.clone()).map_err(|e| e.to_string())?;
+//   }
+
+//   Ok("Optimization complete".to_string())
+
+// }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -52,7 +46,7 @@ pub fn run() {
     .plugin(tauri_plugin_dialog::init())
     .plugin(tauri_plugin_opener::init())
     .invoke_handler(tauri::generate_handler![greet])
-    .invoke_handler(tauri::generate_handler![submit_params])
+    .invoke_handler(tauri::generate_handler![])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }

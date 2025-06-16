@@ -15,6 +15,7 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
+import { useGlobalParams } from "@/components/context/GlobalParamsContext";
 
 function shortenPath(path: string, maxStart = 2, maxEnd = 3) {
   const parts = path.split(/[/\\]/);
@@ -34,7 +35,9 @@ const FormSchema = z.object({
 });
 
 interface FilePickerProps {
-    label: string | React.ReactNode
+    label: string | React.ReactNode;
+    section: string;
+    paramKey: string;
     extensions?: string[];
     mode: "load" | "save" | "save-directory";
     onFileChange?: (filePath: string) => void;
@@ -42,14 +45,18 @@ interface FilePickerProps {
 
 export function FilePicker({
   label,
+  section,
+  paramKey,
   extensions,
   mode,
   onFileChange,
 }: FilePickerProps) {
+    const { combinedParams, updateParams } = useGlobalParams();
+
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-        filePath: "",
+        filePath: String(combinedParams[section]?.[paramKey]) || "",
         },
     });
 
@@ -100,6 +107,8 @@ export function FilePicker({
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
         if (onFileChange) onFileChange(data.filePath);
+        updateParams(section, { [paramKey]: data.filePath }); // Update globalParams
+        console.log(`Updated ${section}.${paramKey}:`, data.filePath ); // Log updated value
     }
 
     return (
