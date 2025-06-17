@@ -1,9 +1,6 @@
 "use client";
 
-import { ThemeProvider } from "@/components/theme-provider"
-import { SidebarProvider } from "@/components/ui/sidebar"
-import { AppSidebar, Trigger } from "@/components/sidebar/AppSidebar"
-import { GlobalParamsProvider } from "@/components/context/GlobalParamsContext";
+import { SharedDataProvider } from "@/components/context/SharedDataContext";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "@/styles/globals.css";
 
@@ -31,11 +28,13 @@ export default function RootLayout({
   return (
     <html>
       <body>
-        <main
-          className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} text-base-content antialiased w-full`}
-        >
-          {children}
-        </main>
+        <SharedDataProvider>
+          <main
+            className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} text-base-content antialiased w-full`}
+          >
+            {children}
+          </main>
+        </SharedDataProvider>
       </body>
     </html> 
   );

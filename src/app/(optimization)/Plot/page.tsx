@@ -1,92 +1,62 @@
 "use client";
-import React from "react";
-import { ReactNode } from "react";
-
-
-// Example data: Replace with your optimization spectrum data
-const spectrumData = Array.from({ length: 500 }, (_, i) => ({
-    x: i,
-    y: Math.exp(-((i - 250) ** 2) / (2 * 40 ** 2)) + 0.1 * Math.random(),
-}));
-
-const width = 600;
-const height = 300;
-const margin = { top: 20, right: 20, bottom: 40, left: 50 };
-
-function getXScale(data: typeof spectrumData) {
-    const minX = Math.min(...data.map((d) => d.x));
-    const maxX = Math.max(...data.map((d) => d.x));
-    return (x: number) =>
-        margin.left +
-        ((x - minX) / (maxX - minX)) * (width - margin.left - margin.right);
-}
-
-function getYScale(data: typeof spectrumData) {
-    const minY = Math.min(...data.map((d) => d.y));
-    const maxY = Math.max(...data.map((d) => d.y));
-    return (y: number) =>
-        height -
-        margin.bottom -
-        ((y - minY) / (maxY - minY)) * (height - margin.top - margin.bottom);
-}
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress"
+import { useSharedData } from "@/components/context/SharedDataContext";
+import { invoke } from '@tauri-apps/api/core';
+import { listen } from "@tauri-apps/api/event";
 
 export default function PlotPage() {
-    const xScale = getXScale(spectrumData);
-    const yScale = getYScale(spectrumData);
+  const { flattenedParams } = useSharedData();
+  const [progress, setProgress] = useState<number | null>(null);
+  const [result, setResult] = useState<string | null>(null);
 
-    // Generate SVG path for the spectrum
-    const pathData = spectrumData
-        .map((d, i) =>
-            i === 0
-                ? `M ${xScale(d.x)},${yScale(d.y)}`
-                : `L ${xScale(d.x)},${yScale(d.y)}`
-        )
-        .join(" ");
+  const handleRunOptimization = async () => {
+    setProgress(0); // Reset progress
+    setResult(null); // Clear previous result
 
-    return (
-        <div style={{ padding: 24 }}>
-            <h1>Optimization Spectrum</h1>
-            <svg width={width} height={height} style={{ border: "1px solid #ccc" }}>
-                {/* X axis */}
-                <line
-                    x1={margin.left}
-                    y1={height - margin.bottom}
-                    x2={width - margin.right}
-                    y2={height - margin.bottom}
-                    stroke="#333"
-                />
-                {/* Y axis */}
-                <line
-                    x1={margin.left}
-                    y1={margin.top}
-                    x2={margin.left}
-                    y2={height - margin.bottom}
-                    stroke="#333"
-                />
-                {/* Spectrum path */}
-                <path d={pathData} fill="none" stroke="#1976d2" strokeWidth={2} />
-                {/* X axis label */}
-                <text
-                    x={width / 2}
-                    y={height - 5}
-                    textAnchor="middle"
-                    fontSize={14}
-                    fill="#333"
-                >
-                    Frequency (a.u.)
-                </text>
-                {/* Y axis label */}
-                <text
-                    x={15}
-                    y={height / 2}
-                    textAnchor="middle"
-                    fontSize={14}
-                    fill="#333"
-                    transform={`rotate(-90 15,${height / 2})`}
-                >
-                    Intensity (a.u.)
-                </text>
-            </svg>
-        </div>
-    );
+    // Listen for progress updates from the backend
+    const unlisten = await listen<number>("optimization-progress", (event) => {
+      setProgress(event.payload); // Update progress
+    });
+
+    try {
+      // Invoke the Rust command to run the optimization
+      const optimizationResult = await invoke<string>("run_optimization");
+      setResult(optimizationResult); // Set the final result
+    } catch (error) {
+      console.error("Error running optimization:", error);
+    } finally {
+      unlisten(); // Stop listening for progress updates
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center gap-8 p-10">
+        <header className="text-4xl font-bold row-start-1 text-center">
+            Run Optimization
+        </header>
+        <pre className="bg-base-300 p-4 rounded w-full max-w-2xl overflow-auto max-h-64">
+            {JSON.stringify(flattenedParams, null, 2)}
+        </pre>
+        <Button
+            onClick={handleRunOptimization}
+            className="bg-primary text-primary-content px-4 py-2 rounded"
+        >
+            Run Optimization
+        </Button>
+        {progress !== null && (
+            <div className="w-1/2 rounded-full h-2 mt-4 mx-auto">
+              <Progress value={progress} className=""/>
+              <p className="text-center mt-2 text-primary-content">{progress}%</p>
+            </div>
+        )}
+        {result && (
+            <div className="bg-success text-success-content p-4 rounded w-full max-w-2xl mt-4">
+                <h2 className="text-xl font-bold">Simulation Result</h2>
+                <p>{result}</p>
+            </div>
+        )}
+    </div>
+  );
 }

@@ -1,35 +1,15 @@
 "use client";
 import { Button } from "@/components/ui/button";
-// import { invoke } from "@tauri-apps/api/core";
 import { useGlobalParams } from "@/components/context/GlobalParamsContext";
+import { useSharedData } from "@/components/context/SharedDataContext";
 import { useRouter } from "next/navigation";
 import { sections } from "@/components/context/sections";
 import { ChevronLeft } from "lucide-react";
-// import { listen } from "@tauri-apps/api/event";
-// import Plot from "react-plotly.js"; // if using Plotly
-// import { useEffect, useState } from "react";
 
 export default function Home() {
   const { combinedParams } = useGlobalParams();
+  const { setFlattenedParams } = useSharedData();
   const router = useRouter();
-  // const [spectrum, setSpectrum] = useState<number[][] | null>(null);
-  
-  // useEffect(() => {
-  //   const unlisten = listen<string>("spectrum_update", event => {
-  //     try {
-  //       const data = JSON.parse(event.payload);
-  //       if (data.spectrum) {
-  //         setSpectrum(data.spectrum);
-  //       }
-  //     } catch (err) {
-  //       console.error("Failed to parse spectrum update:", err);
-  //     }
-  //   });
-
-  //   return () => {
-  //     unlisten.then(f => f());
-  //   };
-  // }, []);
 
   const handleSubmit = () => {
     try {
@@ -47,10 +27,11 @@ export default function Home() {
 
       console.log("Flattened Parameters:", flattenedParams);
 
-      // const result = await invoke<string>("run_optimization", { params: flattenedParams });
-      // console.log("Result from Python:", result);
-      const result=1
-      router.push("/Plot?data=" + encodeURIComponent(result));
+      // Store flattenedParams in the context
+      setFlattenedParams(flattenedParams);
+
+      // Navigate to the plot page
+      router.push("/Plot");
 
     } catch(error) {
       console.error("Error submitting parameters:", error);
