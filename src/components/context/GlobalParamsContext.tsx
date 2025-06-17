@@ -1,13 +1,13 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
 
 interface GlobalParamsContextType {
   combinedParams: Record<string, Record<string, unknown>>;
   updateParams: (section: string, params: Record<string, unknown>) => void;
 }
 
-const defaultParams = {
+const emptyParams = {
   File: {
     tab: "",
     fid: "",
@@ -68,7 +68,24 @@ const defaultParams = {
 const GlobalParamsContext = createContext<GlobalParamsContextType | undefined>(undefined);
 
 export const GlobalParamsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [combinedParams, setCombinedParams] = useState<Record<string, Record<string, unknown>>>(defaultParams);
+  // Initialize combinedParams with data from localStorage or fallback to emptyParams
+  const [combinedParams, setCombinedParams] = useState<Record<string, Record<string, unknown>>>(() => {
+    const savedParams = localStorage.getItem("optimizationParams");
+    if (savedParams) {
+      try {
+        return JSON.parse(savedParams);
+      } catch (error) {
+        console.error("Failed to parse saved optimization parameters:", error);
+        return emptyParams;
+      }
+    }
+    return emptyParams;
+  });
+
+  // Save data to localStorage whenever combinedParams changes
+  useEffect(() => {
+    localStorage.setItem("optimizationParams", JSON.stringify(combinedParams));
+  }, [combinedParams]);
 
   const updateParams = useCallback((section: string, params: Record<string, unknown>) => {
     setCombinedParams((prev) => ({ ...prev, [section]: { ...prev[section], ...params } }));
