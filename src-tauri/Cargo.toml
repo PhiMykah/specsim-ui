@@ -26,8 +26,9 @@ tauri-plugin-dialog = "2"
 tauri-plugin-shell = "2"
 tokio = { version = "1", features = ["full"] }
 tauri-plugin-fs = "2"
-numpy = "0.21"
-pyo3 = { version = "0.21", features = ["extension-module", "auto-initialize"] }
+numpy = "0.25"
+pyo3 = { version = "0.25.1", features = ["extension-module", "auto-initialize"] }
+pyo3-ffi = "0.25.1"
 
 [features]
 # by default Tauri runs in production mode

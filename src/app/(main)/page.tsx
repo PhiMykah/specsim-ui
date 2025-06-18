@@ -5,11 +5,13 @@ import { useSharedData } from "@/components/context/SharedDataContext";
 import { useRouter } from "next/navigation";
 import { sections } from "@/components/context/sections";
 import { ChevronLeft } from "lucide-react";
+import { useSidebar } from "@/components/ui/sidebar";
 
 export default function Home() {
   const { combinedParams } = useGlobalParams();
   const { setFlattenedParams } = useSharedData();
   const router = useRouter();
+  const { open } = useSidebar(); // <-- Get sidebar open state
 
   const handleSubmit = () => {
     try {
@@ -45,12 +47,20 @@ export default function Home() {
     router.push(`/Simulation/${previousSection}`); // Navigate to the previous section
   };
 
+  // Set maxWidth based on sidebar state
+    const maxWidth = open
+      ? "calc(100vw - var(--sidebar-width) - 2rem)" // 2rem for padding/margin
+      : "calc(100vw - 2rem)";
+
   return (
-    <div className="flex flex-col gap-3 p-10">
+    <div
+      className="flex flex-col gap-3 p-10 mx-auto transition-all duration-300 overflow-x-hidden"
+      style={{ maxWidth }}
+    >
       <header className="text-4xl font-bold row-start-1 text-center">
         Submit Parameters
       </header>
-      <pre className="bg-base-300 p-4 rounded">
+      <pre className="bg-base-300 p-4 rounded w-full max-w-full overflow-auto">
         {JSON.stringify(
           {
             ...combinedParams,
@@ -67,10 +77,10 @@ export default function Home() {
       </pre>
       <div className="sticky bottom-0 bg-base-100 z-10 p-4 shadow-md">
         <div className="flex items-center"> 
-          <Button onClick={handleSubmit} className="mr-2">
+          <Button onClick={handleSubmit} className="mr-2 text-primary-content">
             Submit
           </Button>
-          <Button onClick={handleGoBack} size='icon' className="">
+          <Button onClick={handleGoBack} size='icon' className="text-primary-content">
             <ChevronLeft />
           </Button>
         </div>

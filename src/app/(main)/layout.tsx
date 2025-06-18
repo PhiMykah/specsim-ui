@@ -41,7 +41,7 @@ export default function MainLayout({
           <AppSidebar />
           <Trigger />
           <div
-            className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} text-base-content antialiased w-full`}
+            className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} bg-base-200 text-base-content antialiased w-full`}
           >
             {children}
           </div>

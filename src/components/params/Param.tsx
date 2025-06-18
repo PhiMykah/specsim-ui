@@ -19,7 +19,9 @@ export function Parameter({ text, command, className }: { text: string; command:
             <code className="bg-accent text-accent-content rounded-lg p-1 text-sm">
                 {command}  
             </code>
-            {text}
+            <div className="text-base-content">
+                {text}
+            </div>
         </div>
     );
 }

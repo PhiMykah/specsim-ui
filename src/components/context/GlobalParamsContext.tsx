@@ -70,10 +70,10 @@ const GlobalParamsContext = createContext<GlobalParamsContextType | undefined>(u
 export const GlobalParamsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Initialize combinedParams with data from localStorage or fallback to emptyParams
   const [combinedParams, setCombinedParams] = useState<Record<string, Record<string, unknown>>>(() => {
-    const savedParams = localStorage.getItem("optimizationParams");
+    const savedParams = typeof localStorage !== "undefined" ? localStorage.getItem("optimizationParams") : null;
     if (savedParams) {
       try {
-        return JSON.parse(savedParams);
+        return JSON.parse(savedParams) as Record<string, Record<string, unknown>>;
       } catch (error) {
         console.error("Failed to parse saved optimization parameters:", error);
         return emptyParams;

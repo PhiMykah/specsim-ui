@@ -29,7 +29,7 @@ export function FloatInput({
     const form = useForm<z.infer<typeof floatInputSchema>>({
         resolver: zodResolver(floatInputSchema),
         defaultValues: {
-            floatValue: Number(combinedParams[section]?.[paramKey]) || 0,
+            floatValue: Number(combinedParams[section][paramKey]) || 0,
         },
     });
 
@@ -134,7 +134,7 @@ export function IntegerInput({
     const form = useForm<z.infer<typeof integerInputSchema>>({
         resolver: zodResolver(integerInputSchema),
         defaultValues: {
-            integerValue: Number(combinedParams[section]?.[paramKey]) || 0,
+            integerValue: Number(combinedParams[section][paramKey]) || 0,
         },
     });
 
@@ -219,8 +219,8 @@ export function MultiFloatInput({
 }: MultiFloatInputProps) {
     const { combinedParams, updateParams } = useGlobalParams(); // Access globalParams
     const [floats, setFloats] = React.useState<number[]>(
-        Array.isArray(combinedParams[section]?.[paramKey])
-          ? combinedParams[section]?.[paramKey]
+        Array.isArray(combinedParams[section][paramKey])
+          ? combinedParams[section][paramKey]
           : []);    
     const [currentInput, setCurrentInput] = React.useState<string>("");
 
@@ -306,7 +306,7 @@ export function MultiFloatInput({
                 </button>
             </div>
             <div className="flex flex-wrap gap-2">
-                {(Array.isArray(combinedParams[section]?.[paramKey]) ? combinedParams[section]?.[paramKey] : floats).map((float, index) => (
+                {(Array.isArray(combinedParams[section][paramKey]) ? combinedParams[section][paramKey] : floats).map((float, index) => (
                     <div
                         key={index}
                         className="flex indicator justify-between items-center bg-base-100 p-2 rounded"
@@ -343,9 +343,15 @@ export function RangeFloatInput({
     paramKey,
     onRangeChange,
 }: RangeFloatInputProps) {
-    const [lower, setLower] = React.useState<string>("");
-    const [upper, setUpper] = React.useState<string>("");
-    const { combinedParams, updateParams } = useGlobalParams(); // Access globalParams
+    const { combinedParams, updateParams } = useGlobalParams();
+    // Load initial values from global params if available
+    const initialRange = (combinedParams[section][paramKey] ?? {}) as { lower?: number; upper?: number };
+    const [lower, setLower] = React.useState<string>(
+        initialRange.lower !== undefined ? String(initialRange.lower) : ""
+    );
+    const [upper, setUpper] = React.useState<string>(
+        initialRange.upper !== undefined ? String(initialRange.upper) : ""
+    );
 
     const handleLowerChange = (value: string) => {
         setLower(value);
@@ -355,7 +361,7 @@ export function RangeFloatInput({
 
         if (!isNaN(lowerValue) && !isNaN(upperValue) && lowerValue < upperValue) {
             if (onRangeChange) onRangeChange({ lower: lowerValue, upper: upperValue });
-            updateParams(section, { [paramKey]: {lowerValue, upperValue} }); // Update globalParams
+            updateParams(section, { [paramKey]: [lowerValue, upperValue] });
             console.log(`Updated ${section}.${paramKey} lower:`, lowerValue); // Log updated value
         }
     };
@@ -368,7 +374,7 @@ export function RangeFloatInput({
 
         if (!isNaN(lowerValue) && !isNaN(upperValue) && lowerValue < upperValue) {
             if (onRangeChange) onRangeChange({ lower: lowerValue, upper: upperValue });
-            updateParams(section, { [paramKey]: {lowerValue, upperValue} }); // Update globalParams
+            updateParams(section, { [paramKey]: [lowerValue, upperValue] });
             console.log(`Updated ${section}.${paramKey} upper:`, upperValue); // Log updated value
         }
     };

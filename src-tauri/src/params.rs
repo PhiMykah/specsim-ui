@@ -1,0 +1,52 @@
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct OptimizationParams {
+  // File
+  tab: Option<String>,
+  fid: Option<String>,
+  ft1: Option<String>,
+  ft2: Option<String>,
+  out: Option<String>,
+  apod: Option<String>,
+  basis: Option<String>,
+  res: Option<String>,
+  // SimOptions
+  ndim: Option<u32>,
+  scale: Option<Vec<f64>>,
+  off: Option<Vec<f64>>,
+  // OptOptions
+  rx1: Option<u32>,
+  rxn: Option<u32>,
+  mode: Option<String>,
+  trials: Option<u32>,
+  max_fail: Option<u32>,
+  iseed: Option<u32>,
+  verb: Option<bool>,
+  noverb: Option<bool>,
+  report: Option<bool>,
+  freq: Option<Vec<f64>>,
+  step: Option<f64>,
+  // OptParams
+  init_x_decay : Option<Vec<f64>>,
+  init_y_decay : Option<Vec<f64>>,
+  x_p0 : Option<Vec<f64>>,
+  x_p1 : Option<Vec<f64>>,
+  y_p0 : Option<Vec<f64>>,
+  y_p1 : Option<Vec<f64>>,
+  x_decay_bounds : Option<(f64, f64)>,
+  y_decay_bounds : Option<(f64, f64)>,
+  amp_bounds : Option<(f64, f64)>,
+  p0_bounds : Option<(f64, f64)>,
+  p1_bounds : Option<(f64, f64)>,
+  // ModelParams
+  model: Option<String>,
+  j1: Option<Vec<f64>>,
+  j2: Option<Vec<f64>>,
+  j3: Option<Vec<f64>>,
+  // OtherParams
+  ts: Option<bool>,
+  nots: Option<bool>,
+  notdd: Option<bool>,
+  tdd: Option<bool>, 
+  nottdj: Option<bool>,
+  tdj: Option<bool>,
+}

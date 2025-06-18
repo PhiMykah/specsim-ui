@@ -13,6 +13,10 @@ export default function OptimizationParams() {
         updateParams("OptParams", { [key]: value });
     };
     
+    const handleOptChangeRange = (key: keyof typeof optParams, lower : number, upper : number) => {
+        updateParams("OptParams", { [key]: [lower, upper]})
+    }
+
     return (
         <ParamWrapper headerText="Optimization Parameters">
             <MultiFloatInput 
@@ -86,8 +90,8 @@ export default function OptimizationParams() {
                     />
                 }
                 section="OptParams"
-                paramKey="ampBounds"
-                onRangeChange={({lower, upper}) => {handleOptChange("xDecayBounds", `${lower.toString()}, ${upper.toString()}`)}}
+                paramKey="xDecayBounds"
+                onRangeChange={({lower, upper}) => {handleOptChangeRange("xDecayBounds", lower, upper)}}
             />
             <RangeFloatInput 
                 label={
@@ -98,7 +102,7 @@ export default function OptimizationParams() {
                 }
                 section="OptParams"
                 paramKey="yDecayBounds"
-                onRangeChange={({lower, upper}) => {handleOptChange("yDecayBounds", `${lower.toString()}, ${upper.toString()}`)}}
+                onRangeChange={({lower, upper}) => {handleOptChangeRange("yDecayBounds", lower, upper)}}
             />
             <RangeFloatInput 
                 label={
@@ -109,7 +113,7 @@ export default function OptimizationParams() {
                 }
                 section="OptParams"
                 paramKey="ampBounds"
-                onRangeChange={({lower, upper}) => {handleOptChange("ampBounds", `${lower.toString()}, ${upper.toString()}`)}}
+                onRangeChange={({lower, upper}) => {handleOptChangeRange("ampBounds", lower, upper)}}
             />
             <RangeFloatInput 
                 label={
@@ -120,7 +124,7 @@ export default function OptimizationParams() {
                 }
                 section="OptParams"
                 paramKey="p0Bounds"
-                onRangeChange={({lower, upper}) => {handleOptChange("p0Bounds", `${lower.toString()}, ${upper.toString()}`)}}
+                onRangeChange={({lower, upper}) => {handleOptChangeRange("p0Bounds", lower, upper)}}
             />
             <RangeFloatInput 
                 label={
@@ -131,7 +135,7 @@ export default function OptimizationParams() {
                 }
                 section="OptParams"
                 paramKey="p1Bounds"
-                onRangeChange={({lower, upper}) => {handleOptChange("p1Bounds", `${lower.toString()}, ${upper.toString()}`)}}
+                onRangeChange={({lower, upper}) => {handleOptChangeRange("p1Bounds", lower, upper)}}
             />
         </ParamWrapper>
     );
